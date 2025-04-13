@@ -11,7 +11,7 @@ using namespace std;
 
 struct Node {
 	int label;
-	vector<Node> nbrs;
+	vector<Node *> nbrs;
 };
 
 typedef pair<int, int> Edge;

@@ -27,14 +27,14 @@ void depthFirstSearch(Graph *g, int root_node) {
 		exit_depths[i] = 0;
 	}
 
-	function<void(Node node)> _depthFirstSearch = [&](Node node) {
+	function<void(Node * node)> _depthFirstSearch = [&](Node *node) {
 		time++;
-		entry_depths[node.label] = time;
+		entry_depths[node->label] = time;
 
-		for (int i = 0; static_cast<size_t>(i) < node.nbrs.size(); i++) {
-			Node nbr = node.nbrs[i];
-			Edge edge = g->getEdge(node.label, nbr.label);
-			if (entry_depths[nbr.label] == 0) {
+		for (int i = 0; static_cast<size_t>(i) < node->nbrs.size(); i++) {
+			Node *nbr = node->nbrs[i];
+			Edge edge = g->getEdge(node->label, nbr->label);
+			if (entry_depths[nbr->label] == 0) {
 				edges.insert({ edge, "blue" });
 				_depthFirstSearch(nbr);
 			} else {
@@ -43,10 +43,10 @@ void depthFirstSearch(Graph *g, int root_node) {
 		}
 
 		time++;
-		exit_depths[node.label] = time;
+		exit_depths[node->label] = time;
 	};
 
-	_depthFirstSearch(*g->getListNode(root_node));
+	_depthFirstSearch(g->getListNode(root_node));
 
 	printf("\033[1mProfundidades de entrada e saída:\033[0m\n");
 	for (int i = 0; i < num_nodes; i++) {
@@ -80,10 +80,9 @@ void depthFirstSearch(Graph *g, int root_node) {
 }
 
 int main() {
-	list<Edge> edges = { make_pair(0, 1), make_pair(0, 2), make_pair(1, 3), make_pair(1, 4), make_pair(2, 5),
-						 make_pair(2, 6), make_pair(3, 7), make_pair(4, 7), make_pair(5, 8), make_pair(6, 8),
-						 make_pair(7, 9), make_pair(8, 9), make_pair(9, 0) };
-	Graph *g = new Graph(10, edges);
+	list<Edge> edges = { make_pair(0, 1), make_pair(1, 2), make_pair(1, 3),
+						 make_pair(3, 4), make_pair(3, 5), make_pair(5, 6) };
+	Graph *g = new Graph(7, edges);
 
 	g->print();
 	depthFirstSearch(g, 0);

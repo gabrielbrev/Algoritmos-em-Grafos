@@ -12,7 +12,7 @@ Graph::Graph(int num_nodes, list<Edge> edges) {
 			this->adj_matrix[i][j] = 0;
 		}
 
-		Node node = { i, vector<Node>() };
+		Node node = { i, vector<Node *>() };
 		this->adj_list[i] = node;
 	}
 
@@ -23,8 +23,8 @@ Graph::Graph(int num_nodes, list<Edge> edges) {
 		this->adj_matrix[a][b] = 1;
 		this->adj_matrix[b][a] = 1;
 
-		this->adj_list[a].nbrs.push_back(this->adj_list[b]);
-		this->adj_list[b].nbrs.push_back(this->adj_list[a]);
+		this->adj_list[a].nbrs.push_back(&this->adj_list[b]);
+		this->adj_list[b].nbrs.push_back(&this->adj_list[a]);
 	}
 }
 
@@ -69,8 +69,8 @@ void Graph::createEdge(int a, int b) {
 		return;
 	}
 
-	this->adj_list[a].nbrs.push_back(this->adj_list[b]);
-	this->adj_list[b].nbrs.push_back(this->adj_list[a]);
+	this->adj_list[a].nbrs.push_back(&this->adj_list[b]);
+	this->adj_list[b].nbrs.push_back(&this->adj_list[a]);
 
 	this->adj_matrix[a][b] = 1;
 	this->adj_matrix[b][a] = 1;
@@ -100,8 +100,8 @@ void Graph::print() {
 		Node node = this->adj_list[i];
 		printf("\033[38;5;226m%d:\033[0m { ", node.label);
 		int count = 0;
-		for (Node nbr : node.nbrs) {
-			printf("%d", nbr.label);
+		for (Node *nbr : node.nbrs) {
+			printf("%d", nbr->label);
 			count++;
 			if (static_cast<size_t>(count) != node.nbrs.size()) {
 				printf(", ");
