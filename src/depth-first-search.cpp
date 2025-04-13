@@ -1,16 +1,6 @@
 #include "utils/graph.h"
-#include <set>
 
 using namespace std;
-
-struct ColoredEdge {
-	Edge edge;
-	string color;
-
-	bool operator<(const ColoredEdge &other) const {
-		return edge < other.edge; // Compara só o pair<int, int> (util para inserção em um Set)
-	}
-};
 
 void depthFirstSearch(Graph *g, int root_node) {
 	g->assertIndex(root_node);
@@ -20,7 +10,9 @@ void depthFirstSearch(Graph *g, int root_node) {
 	int time = 0;
 	int entry_depths[num_nodes];
 	int exit_depths[num_nodes];
-	set<ColoredEdge> edges;
+	int parents[num_nodes];
+	vector<Edge> red_edges;
+	vector<Edge> blue_edges;
 
 	for (int i = 0; i < num_nodes; i++) {
 		entry_depths[i] = 0;
@@ -28,17 +20,22 @@ void depthFirstSearch(Graph *g, int root_node) {
 	}
 
 	function<void(Node * node)> _depthFirstSearch = [&](Node *node) {
+		int v = node->label;
+
 		time++;
 		entry_depths[node->label] = time;
 
 		for (int i = 0; static_cast<size_t>(i) < node->nbrs.size(); i++) {
 			Node *nbr = node->nbrs[i];
-			Edge edge = g->getEdge(node->label, nbr->label);
+			int w = nbr->label;
+			Edge vw = g->getEdge(v, w);
+
 			if (entry_depths[nbr->label] == 0) {
-				edges.insert({ edge, "blue" });
+				blue_edges.push_back(vw);
+				parents[w] = v;
 				_depthFirstSearch(nbr);
-			} else {
-				edges.insert({ edge, "red" });
+			} else if (exit_depths[w] == 0 && w != parents[v]) {
+				red_edges.push_back(vw);
 			}
 		}
 
@@ -63,18 +60,14 @@ void depthFirstSearch(Graph *g, int root_node) {
 	printf("\n\n");
 
 	printf("\033[1mArestas \033[34mazuis\033[0m\033[1m (árvore):\033[0m\n");
-	for (const ColoredEdge &ce : edges) {
-		if (ce.color == "blue") {
-			printf("(%d, %d)\n", ce.edge.first, ce.edge.second);
-		}
+	for (const Edge &e : blue_edges) {
+		printf("(%d, %d)\n", e.first, e.second);
 	}
 	printf("\n");
 
 	printf("\033[1mArestas \033[31mvermelhas\033[0m\033[1m (retorno):\033[0m\n");
-	for (const ColoredEdge &ce : edges) {
-		if (ce.color == "red") {
-			printf("(%d, %d)\n", ce.edge.first, ce.edge.second);
-		}
+	for (const Edge &e : red_edges) {
+		printf("(%d, %d)\n", e.first, e.second);
 	}
 	printf("\n");
 }
