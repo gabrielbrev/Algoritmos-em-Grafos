@@ -1,22 +1,22 @@
 # Definindo o compilador e as flags de compilação
 CXX = g++
-CXXFLAGS = -std=c++17 -Iutils -Wall -Wextra -O2
+CXXFLAGS = -std=c++17 -Isrc/utils -Wall -Wextra -O2
 
 # Definindo os arquivos fonte e os executáveis
-SRC = $(wildcard *.cpp)
-EXE = $(SRC:.cpp=)
+SRC = $(wildcard src/*.cpp)
+EXE = $(patsubst src/%.cpp,%,$(SRC))
 OUTPUT_DIR = output
 
 # Arquivos de utilitários e objetos
-UTILS_SRC = utils/graph.cpp
+UTILS_SRC = src/utils/graph.cpp
 UTILS_OBJ = $(UTILS_SRC:.cpp=.o)
 
 # Garante a criação da pasta de saída
 $(OUTPUT_DIR):
 	mkdir -p $(OUTPUT_DIR)
 
-# Regra para compilar qualquer arquivo .cpp
-%: %.cpp $(UTILS_OBJ) | $(OUTPUT_DIR)
+# Regra para compilar qualquer arquivo .cpp dentro de src/
+%: src/%.cpp $(UTILS_OBJ) | $(OUTPUT_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $(OUTPUT_DIR)/$@
 	$(MAKE) clean
 
@@ -29,7 +29,7 @@ $(UTILS_OBJ): %.o: %.cpp
 
 # Limpeza dos arquivos objetos gerados
 clean:
-	rm -f *.o utils/*.o
+	rm -f src/*.o src/utils/*.o
 
 # Reset: remove todos os executáveis da pasta output
 reset:
