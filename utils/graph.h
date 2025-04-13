@@ -27,6 +27,7 @@ class Graph {
 
 	int getNumNodes();
 	Node *getListNode(int num);
+	Edge getEdge(int a, int b);
 
 	void assertIndex(int i);
 	void createEdge(int a, int b);

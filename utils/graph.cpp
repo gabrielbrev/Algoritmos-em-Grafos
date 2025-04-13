@@ -37,6 +37,17 @@ Node *Graph::getListNode(int num) {
 	return &this->adj_list[num];
 }
 
+Edge Graph::getEdge(int a, int b) {
+	assertIndex(a);
+	assertIndex(b);
+
+	if (a == b || this->adj_matrix[a][b] == 0) {
+		throw logic_error("edge does not exist");
+	}
+
+	return a < b ? make_pair(a, b) : make_pair(b, a);
+}
+
 void Graph::assertIndex(int i) {
 	if (i < 0) {
 		throw invalid_argument("received negative value");
@@ -54,9 +65,9 @@ void Graph::createEdge(int a, int b) {
 	assertIndex(a);
 	assertIndex(b);
 
-	for (Node node : this->adj_list[a].nbrs)
-		if (node.label == b)
-			return;
+	if (this->adj_matrix[a][b] == 1) {
+		return;
+	}
 
 	this->adj_list[a].nbrs.push_back(this->adj_list[b]);
 	this->adj_list[b].nbrs.push_back(this->adj_list[a]);
