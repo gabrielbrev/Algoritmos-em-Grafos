@@ -20,9 +20,9 @@ void depthFirstSearch(Graph *g, int root_node) {
 
 	vector<Edge> red_edges;
 	vector<Edge> blue_edges;
-
 	vector<Edge> edge_stack;
-	vector<string> blocks;
+	vector<Edge> bridges;
+	vector<vector<Edge>> blocks;
 
 	for (int i = 0; i < num_nodes; i++) {
 		entry_depths[i] = 0;
@@ -49,19 +49,26 @@ void depthFirstSearch(Graph *g, int root_node) {
 				_depthFirstSearch(nbr);
 
 				if (back_values[w] >= entry_depths[v]) {
-					printf("limpou %d\n", edge_stack.size());
-					string block = "";
-					for (Edge e : edge_stack) {
-						stringstream ss;
-						ss << "(" << e.first << ", " << e.second << ")\n";
-						block += ss.str();
+					vector<Edge> block;
+
+					while (edge_stack.size() > 0) {
+						Edge e = edge_stack.back();
+
+						block.push_back(e);
+						edge_stack.pop_back();
+
+						if (e == vw) {
+							break;
+						}
 					}
 
-					if (block.length() > 0) {
+					if (block.size() > 0) {
 						blocks.push_back(block);
-					}
 
-					edge_stack.clear();
+						if (block.size() == 1) {
+							bridges.push_back(block.front());
+						}
+					}
 				}
 
 				back_values[v] = min(back_values[v], back_values[w]);
@@ -152,13 +159,27 @@ void depthFirstSearch(Graph *g, int root_node) {
 				printf(", ");
 			}
 		}
-		printf("\n");
+		printf("\n\n");
 	} else {
 		printf("\033[1mNenhuma articulação encontrada.\033[0m\n\n");
 	}
 
-	for (int i = 0; i < blocks.size(); i++) {
-		printf("\033[1mBloco %zu:\033[0m\n%s\n\n", i + 1, blocks[i].c_str());
+	if (!bridges.empty()) {
+		printf("\033[1mPontes:\033[0m\n");
+		for (const Edge &e : bridges) {
+			printf("(%d, %d)\n", e.first, e.second);
+		}
+		printf("\n");
+	} else {
+		printf("\033[1mNenhuma ponte encontrada.\033[0m\n\n");
+	}
+
+	for (size_t i = 0; i < blocks.size(); i++) {
+		printf("\033[1mBloco %zu:\033[0m\n", i + 1);
+		for (const Edge &e : blocks[i]) {
+			printf("(%d, %d)\n", e.first, e.second);
+		}
+		printf("\n");
 	}
 }
 
@@ -168,7 +189,7 @@ int main() {
 	Graph *g = new Graph(7, edges);
 
 	g->print();
-	depthFirstSearch(g, 1);
+	depthFirstSearch(g, 0);
 
 	return 0;
 }
