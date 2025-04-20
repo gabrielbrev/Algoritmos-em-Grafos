@@ -34,8 +34,7 @@ void depthFirstSearch(Graph *g, int root_node) {
 	function<void(Node * node)> _depthFirstSearch = [&](Node *node) {
 		int v = node->label;
 
-		time++;
-		entry_depths[v] = back_values[v] = time;
+		entry_depths[v] = back_values[v] = ++time;
 
 		for (int i = 0; static_cast<size_t>(i) < node->nbrs.size(); i++) {
 			Node *nbr = node->nbrs[i];
@@ -79,8 +78,7 @@ void depthFirstSearch(Graph *g, int root_node) {
 			}
 		}
 
-		time++;
-		exit_depths[v] = time;
+		exit_depths[v] = ++time;
 	};
 
 	_depthFirstSearch(g->getListNode(root_node));

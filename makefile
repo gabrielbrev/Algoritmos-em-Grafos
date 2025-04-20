@@ -8,7 +8,7 @@ EXE = $(patsubst src/%.cpp,%,$(SRC))
 OUTPUT_DIR = output
 
 # Arquivos de utilitários e objetos
-UTILS_SRC = src/utils/graph.cpp
+UTILS_SRC = src/utils/graph.cpp src/utils/digraph.cpp
 UTILS_OBJ = $(UTILS_SRC:.cpp=.o)
 
 # Garante a criação da pasta de saída
